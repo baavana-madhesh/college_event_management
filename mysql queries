@@ -1,0 +1,86 @@
+-- Database + tables for College Event Management
+CREATE DATABASE IF NOT EXISTS college_events;
+USE college_event;
+
+-- USERS table (as you requested)
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,       -- store MD5 or hashed password
+  full_name VARCHAR(150) NOT NULL,      -- your requested "full-name" (using underscore)
+  dept VARCHAR(100) DEFAULT NULL,
+  role ENUM('admin','staff','student') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- EVENTS table
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  venue VARCHAR(200),
+  event_date DATE NOT NULL,
+  created_by INT,                        -- user id (staff/admin)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- REGISTRATIONS (student registers for event)
+CREATE TABLE IF NOT EXISTS registrations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  event_id INT NOT NULL,
+  student_id INT NOT NULL,
+  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ATTENDANCE (marked by staff)
+CREATE TABLE IF NOT EXISTS attendance (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  event_id INT NOT NULL,
+  student_id INT NOT NULL,
+  status ENUM('present','absent') DEFAULT 'absent',
+  marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- NOTIFICATIONS (sent by admin/staff)
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  message TEXT,
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- FORUM POSTS & COMMENTS
+CREATE TABLE IF NOT EXISTS forum_posts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS forum_comments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  post_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES forum_posts(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- SAMPLE data (users). Passwords stored as MD5 here to match your current PHP login logic.
+INSERT INTO users (username, password, full_name, dept, role) VALUES
+('admin',  MD5('admin123'),  'Admin User',    'Administration', 'admin'),
+('staff1', MD5('staff123'),  'Staff One',     'Computer Science', 'staff'),
+('student1', MD5('student123'),'Student One',  'Computer Science', 'student');
+
+-- OPTIONAL: small sample event created by staff1 (change created_by to a real id if needed)
+INSERT INTO events (title, description, venue, event_date, created_by) VALUES
+('Orientation Day', 'Welcome to new students', 'Main Hall', '2025-09-20', 2);
