@@ -1,12 +1,29 @@
 <?php
-require "db.php";
-/* expects: message, target('all'|'staff'|'students'), created_by */
-$body = jinput();
-$msg = $conn->real_escape_string($body['message'] ?? '');
-$target = $conn->real_escape_string($body['target'] ?? 'all');
-$by = intval($body['created_by'] ?? 0);
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+include 'config.php';
 
-if (!$msg || !$by) { echo json_encode(["success"=>false,"message"=>"Missing"]); exit; }
+if (!isset($conn)) {
+    echo json_encode(["success" => false, "message" => "DB connection failed."]);
+    exit;
+}
 
-$q = "INSERT INTO notifications (message, target, created_by) VALUES ('$msg', '$target', $by)";
-echo $conn->query($q) ? json_encode(["success"=>true]) : json_encode(["success"=>false,"message"=>"Send failed"]);
+// Read POST JSON
+$data = json_decode(file_get_contents("php://input"), true);
+$student_id = $data['student_id'] ?? 'all';
+$title = $data['title'] ?? '';
+$message = $data['message'] ?? '';
+
+if (!$title || !$message) {
+    echo json_encode(["success" => false, "message" => "Title or message missing."]);
+    exit;
+}
+
+$sql = "INSERT INTO notifications (student_id, title, message) VALUES ('$student_id', '$title', '$message')";
+
+if ($conn->query($sql)) {
+    echo json_encode(["success" => true, "message" => "Notification sent successfully."]);
+} else {
+    echo json_encode(["success" => false, "message" => $conn->error]);
+}
+?>
