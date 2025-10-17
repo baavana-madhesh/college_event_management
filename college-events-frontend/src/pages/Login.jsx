@@ -18,50 +18,106 @@ export default function Login() {
     } else setMsg(res.message || "Login failed");
   };
 
-  const quick = (r,u,p) => { setRole(r); setUsername(u); setPassword(p); };
+  const quick = (r, u, p) => {
+    setRole(r);
+    setUsername(u);
+    setPassword(p);
+  };
 
   return (
-    <div className="center" style={{minHeight:'100vh', background:'linear-gradient(180deg,#eef2ff,#ffffff)'}}>
-      <div className="card" style={{width:420}}>
-        <div className="center" style={{marginBottom:8}}>
-          <div style={{fontSize:36}}>🎓</div>
+    <div
+      className="center"
+      style={{ minHeight: "100vh", background: "linear-gradient(180deg,#eef2ff,#ffffff)" }}
+    >
+      <div className="card" style={{ width: 420 }}>
+        <div className="center" style={{ marginBottom: 8 }}>
+          <div style={{ fontSize: 36 }}>🎓</div>
         </div>
-        <h2 className="h1" style={{textAlign:'center'}}>College Events</h2>
-        <p className="muted" style={{textAlign:'center', marginBottom:16}}>Sign in to your account</p>
 
-        <div className="h2" style={{marginTop:4}}>Login</div>
-        <p className="muted" style={{marginTop:0}}>Choose your role and enter your credentials</p>
+        <h2 className="h1" style={{ textAlign: "center" }}>
+          College Events
+        </h2>
+        <p className="muted" style={{ textAlign: "center", marginBottom: 16 }}>
+          Sign in to your account
+        </p>
+
+        <div className="h2" style={{ marginTop: 4 }}>Login</div>
+        <p className="muted" style={{ marginTop: 0 }}>
+          Choose your role and enter your credentials
+        </p>
 
         <label className="label">Role</label>
-        <select value={role} onChange={e=>setRole(e.target.value)}>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="">Select your role</option>
           <option value="admin">Admin</option>
           <option value="staff">Staff</option>
           <option value="student">Student</option>
         </select>
 
-        <div style={{height:12}}/>
+        <div style={{ height: 12 }} />
         <label className="label">Username</label>
-        <input className="input" value={username} onChange={e=>setUsername(e.target.value)} placeholder="Enter username" />
+        <input
+          className="input"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter username"
+        />
 
-        <div style={{height:12}}/>
+        <div style={{ height: 12 }} />
         <label className="label">Password</label>
-        <input className="input" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Enter password" />
+        <input
+          className="input"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+        />
 
-        <div style={{height:16}}/>
-        <button className="btn" onClick={doLogin} style={{width:'100%'}}>Sign In</button>
-        {msg && <div style={{color:'#dc2626', marginTop:10, fontWeight:600}}>{msg}</div>}
+        <div style={{ height: 16 }} />
+        <button className="btn" onClick={doLogin} style={{ width: "100%" }}>
+          Sign In
+        </button>
 
-        <div className="muted" style={{textAlign:'center', marginTop:16}}>Quick Login (Demo)</div>
-        <div className="row cols-3" style={{marginTop:8}}>
-          <button className="btn light" onClick={()=>quick('admin','admin','admin123')}>Admin</button>
-          <button className="btn light" onClick={()=>quick('staff','staff1','staff123')}>Staff</button>
-          <button className="btn light" onClick={()=>quick('student','student1','student123')}>Student</button>
+        {msg && (
+          <div style={{ color: "#dc2626", marginTop: 10, fontWeight: 600 }}>
+            {msg}
+          </div>
+        )}
+
+        {/* ✅ Sign Up Link */}
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <p>Don’t have an account?</p>
+          <a
+            href="/signup"
+            style={{
+              color: "#2563eb",
+              fontWeight: "bold",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            Create an account
+          </a>
         </div>
 
-        <div className="muted" style={{textAlign:'center', marginTop:12}}>
-          Demo Credentials: Admin admin/admin123 | Staff staff1/staff123 | Student student1/student123
+        <div className="muted" style={{ textAlign: "center", marginTop: 16 }}>
+          Quick Login (Demo)
         </div>
+
+        <div className="row cols-3" style={{ marginTop: 8 }}>
+          <button className="btn light" onClick={() => quick("admin", "admin", "admin123")}>
+            Admin
+          </button>
+          <button className="btn light" onClick={() => quick("staff", "staff1", "staff123")}>
+            Staff
+          </button>
+          <button className="btn light" onClick={() => quick("student", "student1", "student123")}>
+            Student
+          </button>
+        </div>
+
+        
+        
       </div>
     </div>
   );
